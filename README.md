@@ -1,3 +1,13 @@
+https://www.geeksforgeeks.org/how-to-execute-sql-server-stored-procedure-in-sql-developer/amp/
+
+
+https://www.geeksforgeeks.org/sql-procedures/amp/
+
+https://www.codeproject.com/Articles/25600/Triggers-SQL-Server
+
+
+
+
 # dbms-lab-2
 create table employ(Empid numeric(5),
 					FirstName varchar(20),
