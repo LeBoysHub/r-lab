@@ -1,0 +1,36 @@
+                   Experiment-8
+Aim:Apply EM algorithm to cluster a set of data stored in a .CSV file. Use the same data set for
+clustering using k-Means algorithm. Compare the results of these two algorithms and comment
+on the quality of clustering. You can add Java/Python ML library classes/API in the program.
+
+Program:
+import pandas as pd
+from sklearn.mixture import GaussianMixture
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+from google.colab import files
+uploaded = files.upload()
+
+import io
+data = pd.read_csv(io.BytesIO(uploaded['ds5.csv']))
+
+X = data.iloc[:, :-1]
+y = data.iloc[:, -1]
+
+#Apply EM Algoritham
+em = GaussianMixture(n_components=3)  # Specify the number of clusters
+em_clusters = em.fit_predict(X)
+
+# Apply k-Means algorithm
+kmeans = KMeans(n_clusters=3)  # Specify the number of clusters
+kmeans_clusters = kmeans.fit_predict(X)
+
+
+# Compare the results using silhouette score
+em_score = silhouette_score(X, em_clusters)
+kmeans_score = silhouette_score(X, kmeans_clusters)
+
+print(f"Silhouette Score - EM Algorithm: {em_score}")
+print(f"Silhouette Score - k-Means Algorithm: {kmeans_score}")
+

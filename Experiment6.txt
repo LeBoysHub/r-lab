@@ -1,0 +1,54 @@
+import pandas as pd
+
+from google.colab import files
+uploaded = files.upload()
+
+!pip install chardet
+
+import chardet
+import pandas as pd
+import io
+
+encoding = chardet.detect(uploaded['spam1.csv'])['encoding']
+
+df2 = pd.read_csv(io.BytesIO(uploaded['spam1.csv']), encoding=encoding)
+df2
+
+df2.groupby('Category').describe()
+
+df2['spam']=df2['Category'].apply(lambda x: 1 if x=='spam' else 0)
+df2.head()
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(df2.Message,df2.spam)
+
+from sklearn.feature_extraction.text import CountVectorizer
+v = CountVectorizer()
+X_train_count = v.fit_transform(X_train.values)
+X_train_count.toarray()[:2]
+
+from sklearn.naive_bayes import MultinomialNB
+model = MultinomialNB()
+model.fit(X_train_count,y_train)
+
+emails = [
+    'As per your request Melle Melle (Oru Minnaminunginte Nurungu Vettam)has been set as your callertune for all Callers. Press *9 to copy your friends Callertune',
+    'Free entry in 2 a wkly comp to win FA Cup final tkts 21st May 2005. Text FA to 87121 to receive entry question(std txt rate)T&Cs apply 08452810075over18s'
+]
+emails_count = v.transform(emails)
+model.predict(emails_count)
+
+X_test_count = v.transform(X_test)
+model.score(X_test_count, y_test)
+
+from sklearn.pipeline import Pipeline
+clf = Pipeline([
+    ('vectorizer', CountVectorizer()),
+    ('nb', MultinomialNB())
+])
+
+clf.fit(X_train, y_train)
+
+clf.score(X_test,y_test)
+
+clf.predict(emails)
